@@ -6,7 +6,7 @@
 /*   By: ytseng <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/15 13:11:27 by ytseng            #+#    #+#             */
-/*   Updated: 2019/04/16 22:32:11 by ytseng           ###   ########.fr       */
+/*   Updated: 2019/04/17 12:31:03 by ytseng           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,13 @@
 # include <stdlib.h>
 # include <fcntl.h>
 
-char	**ft_fill_square(char **c);
+void	ft_fill_square(int o_amount);
+void	ft_print(void);
 
 int		g_length;
 int		g_width;
+int		**g_o_list;
 char	g_symbol[4];
+char	**g_map;
 
 #endif

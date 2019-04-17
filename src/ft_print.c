@@ -1,27 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   bsq.h                                              :+:      :+:    :+:   */
+/*   ft_print.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ytseng <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/04/15 13:11:27 by ytseng            #+#    #+#             */
-/*   Updated: 2019/04/16 22:32:11 by ytseng           ###   ########.fr       */
+/*   Created: 2019/04/17 10:41:06 by ytseng            #+#    #+#             */
+/*   Updated: 2019/04/17 10:41:07 by ytseng           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef BSQ_H
-# define BSQ_H
+#include "bsq.h"
 
-# include <stdio.h>
-# include <unistd.h>
-# include <stdlib.h>
-# include <fcntl.h>
+void	ft_print(void)
+{
+	int j;
+	int k;
 
-char	**ft_fill_square(char **c);
-
-int		g_length;
-int		g_width;
-char	g_symbol[3];
-
-#endif
+	j = 0;
+	while (g_map[j] != 0)
+	{
+		k = 0;
+		while (g_map[j][k] != '\0')
+		{
+			printf("%c", g_map[j][k]);
+			k++;
+		}
+		printf("\n");
+		j++;
+	}
+}

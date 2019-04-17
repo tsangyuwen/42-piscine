@@ -12,150 +12,143 @@
 
 #include "bsq.h"
 
-int		**ft_store_obstacle(char **c, int o)
+void	ft_store_obstacle(int o_amount)
 {
 	int j;
 	int k;
-	int i;
-	int **n;
 
-	n = (int **)malloc(150 * sizeof(int *));
-	i = -1;
-	while (150 > i++)
-		n[i] = (int *)malloc(2 * sizeof(int));
+	g_o_list = (int **)malloc((o_amount + 1) * sizeof(int *));
+	while (o_amount--)
+		g_o_list[o_amount] = (int *)malloc(2 * sizeof(int));
+	o_amount++;
 	j = 0;
-	i = 0;
-	while (c[j] != 0)
+	while (g_map[j] != 0)
 	{
 		k = 0;
-		while (c[j][k] != '\0')
+		while (g_map[j][k] != '\0')
 		{
-			if (c[j][k] == g_symbol[1])
+			if (g_map[j][k] == g_symbol[1])
 			{
-				n[i][0] = j;
-				n[i][1] = k;
-				i++;
+				g_o_list[o_amount][0] = j;
+				g_o_list[o_amount][1] = k;
+				o_amount++;
 			}
 			k++;
 		}
 		j++;
 	}
-	n[i] = 0;
-	return (n);
+	g_o_list[o_amount] = 0;
 }
 
-int		ft_check_square(int top, int left, int right, int **n)
+int		ft_check_square(int t, int l, int r, int *check)
 {
 	int		i;
-	int		bottom;
-	char	*check;
+	int		b;
+	int		*o;
 
-	check = malloc(4 * sizeof(char));
-	bottom = top + right - left;
+	b = t + r - l;
 	i = 0;
-	if (right > g_width || bottom > g_length)
-	    return (0);
-	while (n[i] != 0)
+	while (g_o_list[i] != 0 && (o = g_o_list[i]))
 	{
-		if (top == 0 || (n[i][1] >= left && n[i][1] <= right && n[i][0] == top - 1))
+		if (t == 0 || (o[1] >= l && o[1] <= r && o[0] == t - 1))
 			check[0] = 1;
-		if (left == 0 || (n[i][1] == left - 1 && n[i][0] >= top && n[i][0] <= bottom))
+		if (l == 0 || (o[1] == l - 1 && o[0] >= t && o[0] <= b))
 			check[1] = 1;
-		if (right == g_width - 1 || (n[i][1] == right + 1 && n[i][0] >= top && n[i][0] <= bottom))
+		if (r == g_width - 1 || (o[1] == r + 1 && o[0] >= t && o[0] <= b))
 			check[2] = 1;
-		if (bottom == g_length - 1 || (n[i][1] >= left && n[i][1] <= right && n[i][0] == bottom + 1))
+		if (b == g_length - 1 || (o[1] >= l && o[1] <= r && o[0] == b + 1))
 			check[3] = 1;
+		if (check[0] == 1 && check[1] == 1 && check[2] == 1 && check[3] == 1)
+			return (2);
+		if (o[1] == r && o[0] == b)
+			return (0);
 		i++;
 	}
-	if (check[0] == 1 && check[1] == 1 && check[2] == 1 && check[3] == 1)
-		return (2);
 	if (check[2] == 1 || check[3] == 1)
 		return (0);
 	return (1);
 }
 
-int		ft_find_square(int j, int *k, int **n)
+int		ft_find_square(int j, int *k)
 {
-	int check;
-	int square;
+	int		check;
+	int		square;
+	int		right;
+	int		*check_list;
 
 	check = 1;
 	square = 1;
 	while (check == 1)
 	{
-		check = ft_check_square(j, *k, square + *k - 1, n);
-		//printf("check %i\n", check);
-		if (check == 0)
-		{
-		    *k = *k + square;
+		check_list = malloc(4 * sizeof(char));
+		check_list[0] = '0';
+		check_list[1] = '0';
+		check_list[2] = '0';
+		check_list[3] = '0';
+		right = square + *k - 1;
+		if (right > g_width || j + *k - right > g_length)
 			return (0);
-		}
+		check = ft_check_square(j, *k, right, check_list);
 		square++;
+		free(check_list);
 	}
+	if (check == 0)
+		return (0);
 	*k = *k + square - 1;
-	//printf("square %i\n", square);
 	return (square - 1);
 }
 
-int 	ft_find_max_square(char **c, int ***n)
+void	ft_find_max_square(int *max)
 {
 	int j;
 	int k;
-	int max;
 	int max_k;
 	int max_j;
 	int square;
 
 	j = 0;
-	max = 0;
-	while (c[j] != 0)
+	while (g_map[j] != 0 && j < g_length - *max)
 	{
 		k = 0;
-		while (c[j][k] != '\0')
+		while (g_map[j][k] != '\0' && k < g_width - *max)
 		{
-			if (c[j][k] != 'o')
-			{
-			    square = ft_find_square(j, &k, *n);
-				if (max < square)
+			if (g_map[j][k] != g_symbol[1])
+				if (*max < (square = ft_find_square(j, &k)))
 				{
-				    max = square;
+					*max = square;
 					max_j = j;
-					max_k = k - max;
+					max_k = k - *max;
 				}
-			}
 			k++;
 		}
 		j++;
 	}
 	g_length = max_j;
 	g_width = max_k;
-	return (max);
 }
 
-char	**ft_fill_square(char **c)
+void	ft_fill_square(int o_amount)
 {
-	int o = 10;
-	int **n;
-	int max;
-	int j;
-	int k;
-	char *t;
+	int		max;
+	int		j;
+	int		k;
+	char	*t;
 
-	n = ft_store_obstacle(c, o);
-	max = ft_find_max_square(c, &n);
+	ft_store_obstacle(o_amount);
+	max = 0;
+	ft_find_max_square(&max);
 	if (max == 0)
-		return (0);
+		g_map = 0;
 	j = g_length;
 	k = g_width;
 	while (j < g_length + max)
-    {
-        k = g_width;
-        while (k < g_width + max)
-        {
-            c[j][k] = g_symbol[2];
-            k++;
-        }
-        j++;
-    }
-	return (c);
+	{
+		k = g_width;
+		while (k < g_width + max)
+		{
+			g_map[j][k] = g_symbol[2];
+			k++;
+		}
+		j++;
+	}
 }
