@@ -59,27 +59,6 @@ void	ft_store_obstacle(int o_amount)
 	g_o_list[o_amount] = 0;
 }
 
-void	ft_free(void)
-{
-	int i;
-
-	i = 0;
-	while (g_map != 0 && i <= g_width + 1)
-	{
-		free(g_map[i]);
-		i++;
-	}
-	if (g_map != 0)
-		free(g_map);
-	while (g_o_list != 0 && i <= g_width + 1)
-	{
-		free(g_o_list[i]);
-		i++;
-	}
-	if (g_o_list != 0)
-		free(g_o_list);
-}
-
 void	ft_init(char *file, int o_amount)
 {
 	int check;
@@ -92,17 +71,15 @@ void	ft_init(char *file, int o_amount)
 		check = ft_read_input(file, &o_amount);
 	else
 		check = ft_read_input(0, &o_amount);
-	if (check != 0 && g_map != 0 && g_length > 0 && g_width > 0)
-		ft_store_obstacle(o_amount);
-	if (check != 0 && g_map != 0 && g_length > 0 && g_width > 0)
-		ft_solve_square(o_amount);
-	if (check != 0 && g_map != 0 && g_length > 0 && g_width > 0)
-		ft_print();
-	else
-	{
-		if (check == 0)
-			write(1, "map error\n", 10);
-	}
+	if (g_length > 0 && g_width > 0)
+		if (check != 0 && g_map != 0)
+			ft_store_obstacle(o_amount);
+		if (check != 0 && g_map != 0)
+			ft_solve_square(o_amount);
+		if (check != 0 && g_map != 0)
+			ft_print();
+	if (check == 0 || g_map == 0)
+		write(1, "map error\n", 10);
 }
 
 int		main(int argc, char **argv)
