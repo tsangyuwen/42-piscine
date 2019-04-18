@@ -23,10 +23,10 @@ void	ft_print(void)
 		k = 0;
 		while (g_map[j][k] != '\0')
 		{
-			printf("%c", g_map[j][k]);
+			write(1, &g_map[j][k], 1);
 			k++;
 		}
-		printf("\n");
+		write(1, "\n", 1);
 		j++;
 	}
 }
@@ -80,8 +80,11 @@ void	ft_free(void)
 		free(g_o_list);
 }
 
-int		ft_init(char *file, int check, int o_amount, int i)
+void	ft_init(char *file, int o_amount)
 {
+	int check;
+
+	g_map = 0;
 	g_width = 0;
 	g_length = 0;
 	o_amount = 0;
@@ -96,32 +99,25 @@ int		ft_init(char *file, int check, int o_amount, int i)
 	if (check != 0 && g_map != 0 && g_length > 0 && g_width > 0)
 		ft_print();
 	else
-		return (0);
-	return (1);
+	{
+		if (check == 0)
+			write(1, "map error\n", 10);
+	}
 }
 
 int		main(int argc, char **argv)
 {
-	int check;
-	int i;
 	int o_amount;
 
 	argv++;
+	o_amount = 0;
 	if (argc > 1)
 		while (*argv)
 		{
-			g_map = 0;
-			check = ft_init(argv[0], check, o_amount, i);
-			if (check == 0)
-				printf("map error\n");
+			ft_init(argv[0], o_amount);
 			argv++;
 		}
 	else
-	{
-		g_map = 0;
-		check = ft_init(0, check, o_amount, i);
-		if (check == 0)
-			printf("map error\n");
-	}
+		ft_init(0, o_amount);
 	return (0);
 }
