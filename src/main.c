@@ -59,6 +59,27 @@ void	ft_store_obstacle(int o_amount)
 	g_o_list[o_amount] = 0;
 }
 
+void	ft_free(void)
+{
+	int i;
+
+	i = 0;
+	while (g_map != 0 && i <= g_width + 1)
+	{
+		free(g_map[i]);
+		i++;
+	}
+	if (g_map != 0)
+		free(g_map);
+	while (g_o_list != 0 && i <= g_width + 1)
+	{
+		free(g_o_list[i]);
+		i++;
+	}
+	if (g_o_list != 0)
+		free(g_o_list);
+}
+
 int		ft_init(char *file, int check, int o_amount, int i)
 {
 	g_width = 0;
@@ -76,14 +97,6 @@ int		ft_init(char *file, int check, int o_amount, int i)
 		ft_print();
 	else
 		return (0);
-	i = 0;
-	while (g_map != 0 && i <= g_width + 1)
-	{
-		free(g_map[i]);
-		i++;
-	}
-	if (g_map != 0)
-		free(g_map);
 	return (1);
 }
 
