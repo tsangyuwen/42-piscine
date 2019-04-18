@@ -67,10 +67,14 @@ void	ft_init(char *file, int o_amount)
 	g_width = 0;
 	g_length = 0;
 	o_amount = 0;
+	g_symbol[3] = '\0';
 	if (file)
+	{
 		check = ft_read_input(file, &o_amount);
+	}
 	else
 		check = ft_read_input(0, &o_amount);
+
 	if (g_length > 0 && g_width > 0)
 	{
 		if (check != 0 && g_map != 0)
