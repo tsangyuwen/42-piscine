@@ -6,7 +6,7 @@
 /*   By: ytseng <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/17 10:41:06 by ytseng            #+#    #+#             */
-/*   Updated: 2019/04/18 09:41:44 by ytseng           ###   ########.fr       */
+/*   Updated: 2019/04/17 10:41:07 by ytseng           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,9 +69,12 @@ void	ft_init(char *file, int o_amount)
 	o_amount = 0;
 	g_symbol[3] = '\0';
 	if (file)
+	{
 		check = ft_read_input(file, &o_amount);
+	}
 	else
 		check = ft_read_input(0, &o_amount);
+
 	if (g_length > 0 && g_width > 0)
 	{
 		if (check != 0 && g_map != 0)

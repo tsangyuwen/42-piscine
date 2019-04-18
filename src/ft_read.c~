@@ -6,7 +6,7 @@
 /*   By: ytseng <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/15 13:28:05 by ytseng            #+#    #+#             */
-/*   Updated: 2019/04/18 09:43:37 by ytseng           ###   ########.fr       */
+/*   Updated: 2019/04/15 15:02:19 by ytseng           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ int		ft_read_map(int fd, char *str, int ret, int *o_amount)
 	{
 		g_map[j] = malloc((g_width + 1) * sizeof(char));
 		k = 0;
-		while (str[k] != '\n' && str[k] != '\0')
+		while (str[k] != '\n')
 		{
 			if (str[k] == g_symbol[1])
 				*o_amount = *o_amount + 1;
@@ -88,7 +88,6 @@ int		ft_read_map(int fd, char *str, int ret, int *o_amount)
 		ret = read(fd, str, g_width + 1);
 		str[ret] = '\0';
 	}
-	g_map[j] = 0;
 	return (1);
 }
 
