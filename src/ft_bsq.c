@@ -12,34 +12,6 @@
 
 #include "bsq.h"
 
-void	ft_store_obstacle(int o_amount)
-{
-	int j;
-	int k;
-
-	g_o_list = (int **)malloc((o_amount + 1) * sizeof(int *));
-	while (o_amount--)
-		g_o_list[o_amount] = (int *)malloc(2 * sizeof(int));
-	o_amount++;
-	j = 0;
-	while (g_map[j] != 0)
-	{
-		k = 0;
-		while (g_map[j][k] != '\0')
-		{
-			if (g_map[j][k] == g_symbol[1])
-			{
-				g_o_list[o_amount][0] = j;
-				g_o_list[o_amount][1] = k;
-				o_amount++;
-			}
-			k++;
-		}
-		j++;
-	}
-	g_o_list[o_amount] = 0;
-}
-
 int		ft_check_square(int t, int l, int r, int *check)
 {
 	int		i;
@@ -61,11 +33,11 @@ int		ft_check_square(int t, int l, int r, int *check)
 		if (check[0] == 1 && check[1] == 1 && check[2] == 1 && check[3] == 1)
 			return (2);
 		if (o[1] == r && o[0] == b)
-			return (0);
+			return (3);
 		i++;
 	}
 	if (check[2] == 1 || check[3] == 1)
-		return (0);
+		return (3);
 	return (1);
 }
 
@@ -127,20 +99,8 @@ void	ft_find_max_square(int *max)
 	g_width = max_k;
 }
 
-void	ft_fill_square(int o_amount)
+void	ft_fill_square(int j, int k, int max)
 {
-	int		max;
-	int		j;
-	int		k;
-	char	*t;
-
-	ft_store_obstacle(o_amount);
-	max = 0;
-	ft_find_max_square(&max);
-	if (max == 0)
-		g_map = 0;
-	j = g_length;
-	k = g_width;
 	while (j < g_length + max)
 	{
 		k = g_width;
@@ -150,5 +110,29 @@ void	ft_fill_square(int o_amount)
 			k++;
 		}
 		j++;
+	}
+}
+
+void	ft_solve_square(int o_amount)
+{
+	int		max;
+	int		j;
+	int		k;
+	char	*t;
+
+	if (o_amount != 0)
+	{
+		max = 0;
+		ft_find_max_square(&max);
+		j = g_length;
+		k = g_width;
+		ft_fill_square(j, k, max);
+	}
+	else
+	{
+		max = g_length;
+		g_length = 0;
+		g_width = 0;
+		ft_fill_square(j, k, max);
 	}
 }

@@ -1,137 +1,114 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_print.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ytseng <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/04/15 13:28:05 by ytseng            #+#    #+#             */
-/*   Updated: 2019/04/15 15:02:19 by ytseng           ###   ########.fr       */
+/*   Created: 2019/04/17 10:41:06 by ytseng            #+#    #+#             */
+/*   Updated: 2019/04/17 10:41:07 by ytseng           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "bsq.h"
 
-char	*ft_strcat(char *str, char input)
-{
-	char	*comb;
-	int		i;
-
-	i = 0;
-	g_width++;
-	comb = (char*)malloc(sizeof(char) * (g_width + 1));
-	while (g_width > 1 && str[i] != '\0')
-	{
-		comb[i] = str[i];
-		i++;
-	}
-	if (g_width > 1)
-		free(str);
-	comb[g_width - 1] = input;
-	comb[g_width] = '\0';
-	return (comb);
-}
-
-void	ft_read_define(int fd)
-{
-	int		i;
-	int		ret;
-	char	input[1];
-
-	i = 0;
-	while ((ret = read(fd, input, 1)) && input[0] != '\n')
-		if (input[0] >= '0' && input[0] <= '9')
-			g_length = g_length * 10 + input[0] - '0';
-		else
-		{
-			g_symbol[i] = input[0];
-			i++;
-		}
-}
-
-char	*ft_read_first_line(int fd)
-{
-	char	*str;
-	char	input[1];
-	int		ret;
-
-	while ((ret = read(fd, input, 1)) && input[0] != '\n')
-		str = ft_strcat(str, input[0]);
-	str = ft_strcat(str, input[0]);
-	g_width--;
-	return (str);
-}
-
-int		ft_read_map(int fd, char *str, int ret, int *o_amount)
+void	ft_print(void)
 {
 	int j;
 	int k;
 
 	j = 0;
-	while (ret)
+	while (g_map[j] != 0)
 	{
-		g_map[j] = malloc((g_width + 1) * sizeof(char));
 		k = 0;
-		while (str[k] != '\n')
+		while (g_map[j][k] != '\0')
 		{
-			if (str[k] == g_symbol[1])
-				*o_amount = *o_amount + 1;
-			if (str[k] != g_symbol[0] && str[k] != g_symbol[1])
-				return (0);
-			g_map[j][k] = str[k];
+			printf("%c", g_map[j][k]);
 			k++;
 		}
-		if (k != g_width)
-			return (0);
-		g_map[j][k] = '\0';
+		printf("\n");
 		j++;
-		ret = read(fd, str, g_width + 1);
-		str[ret] = '\0';
 	}
-	return (1);
 }
 
-int		ft_read_input(char *path, int *o_amount)
+void	ft_store_obstacle(int o_amount)
 {
-	int		fd;
-	int		ret;
-	char	*str;
+	int j;
+	int k;
 
-	fd = open(path, O_RDWR);
-	if (fd < 0)
+	g_o_list = (int **)malloc((o_amount + 1) * sizeof(int *));
+	while (o_amount--)
+		g_o_list[o_amount] = (int *)malloc(2 * sizeof(int));
+	o_amount++;
+	j = 0;
+	while (g_map[j] != 0)
+	{
+		k = 0;
+		while (g_map[j][k] != '\0')
+		{
+			if (g_map[j][k] == g_symbol[1])
+			{
+				g_o_list[o_amount][0] = j;
+				g_o_list[o_amount][1] = k;
+				o_amount++;
+			}
+			k++;
+		}
+		j++;
+	}
+	g_o_list[o_amount] = 0;
+}
+
+int		ft_init(char *file, int check, int o_amount, int i)
+{
+	g_width = 0;
+	g_length = 0;
+	o_amount = 0;
+	if (file)
+		check = ft_read_input(file, &o_amount);
+	else
+		check = ft_read_input(0, &o_amount);
+	if (check != 0 && g_map != 0 && g_length > 0 && g_width > 0)
+		ft_store_obstacle(o_amount);
+	if (check != 0 && g_map != 0 && g_length > 0 && g_width > 0)
+		ft_solve_square(o_amount);
+	if (check != 0 && g_map != 0 && g_length > 0 && g_width > 0)
+		ft_print();
+	else
 		return (0);
-	ret = 1;
-	ft_read_define(fd);
-	str = ft_read_first_line(fd);
-	g_map = malloc((g_length + 1) * sizeof(char*));
-	ft_read_map(fd, str, ret, o_amount);
-	close(fd);
-	if (fd < 0)
-		return (0);
+	i = 0;
+	while (g_map != 0 && i <= g_width + 1)
+	{
+		free(g_map[i]);
+		i++;
+	}
+	if (g_map != 0)
+		free(g_map);
 	return (1);
 }
 
 int		main(int argc, char **argv)
 {
-	int o_amount;
 	int check;
+	int i;
+	int o_amount;
 
 	argv++;
 	if (argc > 1)
 		while (*argv)
 		{
-			g_width = 0;
-			o_amount = 0;
-			check = ft_read_input(argv[0], &o_amount);
-			if (check != 0 && g_map != 0 && g_length > 0 && g_width > 0)
-				ft_fill_square(o_amount);
-			if (g_map != 0 && g_length > 0 && g_width > 0)
-				ft_print();
-			else
-				printf("map error");
+			g_map = 0;
+			check = ft_init(argv[0], check, o_amount, i);
+			if (check == 0)
+				printf("map error\n");
 			argv++;
 		}
 	else
-		printf("missing argument!");
+	{
+		g_map = 0;
+		check = ft_init(0, check, o_amount, i);
+		if (check == 0)
+			printf("map error\n");
+	}
 	return (0);
 }
