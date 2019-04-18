@@ -106,6 +106,8 @@ int		ft_read_input(char *path, int *o_amount)
 		return (0);
 	ret = 1;
 	ft_read_define(fd);
+	if (!g_length || !g_symbol[3])
+		return (0);
 	str = ft_read_first_line(fd);
 	g_map = malloc((g_length + 1) * sizeof(char*));
 	if (ft_read_map(fd, str, ret, o_amount) != 1)
