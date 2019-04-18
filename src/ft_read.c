@@ -107,12 +107,7 @@ int		ft_read_input(char *path, int *o_amount)
 	ret = 1;
 	ft_read_define(fd);
 	if (g_length == 0 || g_symbol[2] == '\0')
-	{
-		printf("in");
-		printf("l %i\n", g_length);
-		printf("\ns %i\n", g_symbol[2] == '\0');
 		return (0);
-	}
 	str = ft_read_first_line(fd);
 	g_map = malloc((g_length + 1) * sizeof(char*));
 	if (ft_read_map(fd, str, ret, o_amount) != 1)

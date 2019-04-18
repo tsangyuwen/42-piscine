@@ -16,7 +16,6 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <fcntl.h>
-# include <stdio.h>
 
 void	ft_solve_square(int o_amount);
 void	ft_print(void);
