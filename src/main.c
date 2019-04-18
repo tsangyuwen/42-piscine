@@ -72,12 +72,14 @@ void	ft_init(char *file, int o_amount)
 	else
 		check = ft_read_input(0, &o_amount);
 	if (g_length > 0 && g_width > 0)
+	{
 		if (check != 0 && g_map != 0)
 			ft_store_obstacle(o_amount);
 		if (check != 0 && g_map != 0)
 			ft_solve_square(o_amount);
 		if (check != 0 && g_map != 0)
 			ft_print();
+	}
 	if (check == 0 || g_map == 0)
 		write(1, "map error\n", 10);
 }
