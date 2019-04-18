@@ -118,8 +118,10 @@ void	ft_solve_square(int o_amount)
 	int		max;
 	int		j;
 	int		k;
-	char	*t;
+	//char	*t;
 
+	j = 0;
+	k = 0;
 	if (o_amount != 0)
 	{
 		max = 0;

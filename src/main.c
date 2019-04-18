@@ -85,6 +85,7 @@ int		ft_init(char *file, int check, int o_amount, int i)
 	g_width = 0;
 	g_length = 0;
 	o_amount = 0;
+	i = 0;
 	if (file)
 		check = ft_read_input(file, &o_amount);
 	else
@@ -107,13 +108,17 @@ int		main(int argc, char **argv)
 	int o_amount;
 
 	argv++;
+	i = 0;
+	check = 0;
+	o_amount = 0;
 	if (argc > 1)
 		while (*argv)
 		{
 			g_map = 0;
 			check = ft_init(argv[0], check, o_amount, i);
 			if (check == 0)
-				printf("map error\n");
+				//printf("map error\n");
+				write(1, "map error\n", 10);
 			argv++;
 		}
 	else
@@ -121,7 +126,8 @@ int		main(int argc, char **argv)
 		g_map = 0;
 		check = ft_init(0, check, o_amount, i);
 		if (check == 0)
-			printf("map error\n");
+			//printf("map error\n");
+			write(1, "map error\n", 10);
 	}
 	return (0);
 }

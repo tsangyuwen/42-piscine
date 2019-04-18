@@ -10,14 +10,17 @@
 #                                                                              #
 #******************************************************************************#
 
+SRCS = src/ft_bsq.c src/ft_read.c src/main.c
+NAME = bsq
+
 all: compile_file
 
 compile_file:
-	gcc -I includes/ -o bsq src/*.c
+	gcc -Wall -Werror -Wextra -I includes/ -o $(NAME) $(SRCS)
 
-.PHONY: clean
+.PHONY: fclean
 
-clean:
-	rm bsq
+fclean: 
+	/bin/rm -f $(NAME)
 
-re: clean all
+re: fclean all
