@@ -32,68 +32,89 @@ char	*ft_strcat(char *str, char input)
 	return (comb);
 }
 
-void	ft_read_define(char input, int *i)
+void	ft_read_define(int fd)
 {
-	if (input >= '0' && input <= '9')
-		g_length = g_length * 10 + input - '0';
-	else
-	{
-		g_symbol[*i] = input;
-		*i = *i + 1;
-	}
-}
-
-void	ft_read_input(char *file, int *o_amount)
-{
+	int		i;
 	int		ret;
-	int		fd;
-	int		j;
-	int		k;
-	char	*str;
 	char	input[1];
 
-	fd = open(file, O_RDWR);
-	if (fd < 0)
-	{
-		printf("open error");
-		g_map = 0;
-	}
-	j = 0;
+	i = 0;
 	while ((ret = read(fd, input, 1)) && input[0] != '\n')
-		ft_read_define(input[0], &j);
-	g_map = malloc((g_length + 1) * sizeof(char*));
+		if (input[0] >= '0' && input[0] <= '9')
+			g_length = g_length * 10 + input[0] - '0';
+		else
+		{
+			g_symbol[i] = input[0];
+			i++;
+		}
+}
+
+char	*ft_read_first_line(int fd)
+{
+	char	*str;
+	char	input[1];
+	int		ret;
+
 	while ((ret = read(fd, input, 1)) && input[0] != '\n')
 		str = ft_strcat(str, input[0]);
 	str = ft_strcat(str, input[0]);
 	g_width--;
+	return (str);
+}
+
+int		ft_read_map(int fd, char *str, int ret, int *o_amount)
+{
+	int j;
+	int k;
+
 	j = 0;
 	while (ret)
 	{
 		g_map[j] = malloc((g_width + 1) * sizeof(char));
 		k = 0;
-		while (str[k] != '\0' && str[k] != '\n')
+		while (str[k] != '\n')
 		{
 			if (str[k] == g_symbol[1])
 				*o_amount = *o_amount + 1;
+			if (str[k] != g_symbol[0] && str[k] != g_symbol[1])
+				return (0);
 			g_map[j][k] = str[k];
 			k++;
 		}
+		if (k != g_width)
+			return (0);
 		g_map[j][k] = '\0';
 		j++;
 		ret = read(fd, str, g_width + 1);
 		str[ret] = '\0';
 	}
-	g_map[j] = 0;
-	if (close(fd) == -1)
-	{
-		printf("close error");
-		g_map = 0;
-	}
+	return (1);
+}
+
+int		ft_read_input(char *path, int *o_amount)
+{
+	int		fd;
+	int		ret;
+	char	*str;
+
+	fd = open(path, O_RDWR);
+	if (fd < 0)
+		return (0);
+	ret = 1;
+	ft_read_define(fd);
+	str = ft_read_first_line(fd);
+	g_map = malloc((g_length + 1) * sizeof(char*));
+	ft_read_map(fd, str, ret, o_amount);
+	close(fd);
+	if (fd < 0)
+		return (0);
+	return (1);
 }
 
 int		main(int argc, char **argv)
 {
 	int o_amount;
+	int check;
 
 	argv++;
 	if (argc > 1)
@@ -101,11 +122,13 @@ int		main(int argc, char **argv)
 		{
 			g_width = 0;
 			o_amount = 0;
-			ft_read_input(argv[0], &o_amount);
-			if (g_map != 0)
+			check = ft_read_input(argv[0], &o_amount);
+			if (check != 0 && g_map != 0 && g_length > 0 && g_width > 0)
 				ft_fill_square(o_amount);
-			if (g_map != 0)
+			if (g_map != 0 && g_length > 0 && g_width > 0)
 				ft_print();
+			else
+				printf("map error");
 			argv++;
 		}
 	else
